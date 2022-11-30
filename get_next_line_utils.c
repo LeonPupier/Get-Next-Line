@@ -6,7 +6,7 @@
 /*   By: lpupier <lpupier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 11:47:07 by lpupier           #+#    #+#             */
-/*   Updated: 2022/11/30 14:39:25 by lpupier          ###   ########.fr       */
+/*   Updated: 2022/11/30 17:48:30 by lpupier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,27 +77,12 @@ char	*ft_strjoin(char *s1, char *s2, size_t idx_max)
 	return (new_str);
 }
 
-void	clean_buffer(char *buffer)
+static char	*allocate_new_str(char *str, int idx)
 {
-	size_t	idx;
-	size_t	len_buffer;
-
-	idx = 0;
-	while (buffer[idx] && buffer[idx] != '\n')
-		idx++;
-	if (buffer[idx] == '\0')
-	{
-		buffer[0] = '\0';
-		return ;
-	}
-	idx++;
-	len_buffer = 0;
-	while (buffer[idx + len_buffer])
-	{
-		buffer[len_buffer] = buffer[idx + len_buffer];
-		len_buffer++;
-	}
-	buffer[len_buffer] = '\0';
+	if (str[idx])
+		return (malloc(sizeof(char) * (idx + 2)));
+	else
+		return (malloc(sizeof(char) * (idx + 1)));
 }
 
 char	*recover_before_separator(char *str)
@@ -110,10 +95,7 @@ char	*recover_before_separator(char *str)
 	idx = 0;
 	while (str[idx] && str[idx] != '\n')
 		idx++;
-	if (str[idx])
-		new_str = malloc(sizeof(char) * (idx + 2));
-	else
-		new_str = malloc(sizeof(char) * (idx + 1));
+	new_str = allocate_new_str(str, idx);
 	idx = 0;
 	while (str[idx] && str[idx] != '\n')
 	{
