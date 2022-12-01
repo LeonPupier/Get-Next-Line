@@ -1,76 +1,66 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpupier <lpupier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 11:47:07 by lpupier           #+#    #+#             */
-/*   Updated: 2022/12/01 10:27:35 by lpupier          ###   ########.fr       */
+/*   Updated: 2022/12/01 13:37:31 by lpupier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
-char	*ft_strdup(const char *s1)
+void	*ft_memset(void *b, int c, size_t len)
 {
-	size_t	len;
-	size_t	idx;
-	char	*new_s1;
+	unsigned char	*d;
+	size_t			idx;
 
-	len = ft_strlen(s1);
+	d = (unsigned char *)b;
 	idx = 0;
-	new_s1 = malloc(sizeof(char) * (len + 1));
-	if (!new_s1)
-		return (NULL);
 	while (idx < len)
 	{
-		new_s1[idx] = s1[idx];
+		d[idx] = (unsigned char)c;
 		idx++;
 	}
-	new_s1[idx] = '\0';
-	return (new_s1);
+	return (b);
 }
 
-static int	loop_join(char *new_str, char *s1, char *s2, size_t idx_max)
+void	ft_bzero(void *s, size_t n)
 {
-	size_t	count;
-	size_t	count_s2;
-	size_t	len_s1;
+	size_t	i;
 
-	len_s1 = ft_strlen(s1);
-	count = 0;
-	while (count < len_s1)
+	i = 0;
+	if (n > 0)
 	{
-		new_str[count] = s1[count];
-		count++;
+		while (i < n)
+		{
+			((char *)s)[i] = 0;
+			i++;
+		}
 	}
-	count_s2 = 0;
-	while (count_s2 < idx_max)
-	{
-		new_str[count] = s2[count_s2];
-		count_s2++;
-		count++;
-	}
-	return (count);
 }
 
 char	*ft_strjoin(char *s1, char *s2, size_t idx_max)
 {
 	size_t	count;
+	size_t	count_s2;
 	size_t	len_s1;
 	char	*new_str;
 
 	len_s1 = ft_strlen(s1);
 	new_str = malloc(sizeof(char) * (len_s1 + BUFFER_SIZE + 1));
 	if (new_str == NULL)
-	{
-		free(s1);
-		return (NULL);
-	}
-	count = loop_join(new_str, s1, s2, idx_max);
+		return (free(s1), NULL);
+	count = -1;
+	while (++count < len_s1)
+		new_str[count] = s1[count];
+	count_s2 = -1;
+	while (++count_s2 < idx_max)
+		new_str[count + count_s2] = s2[count_s2];
 	free(s1);
-	new_str[count] = '\0';
+	new_str[count + count_s2] = '\0';
 	return (new_str);
 }
 

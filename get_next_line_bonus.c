@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lpupier <lpupier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 11:46:45 by lpupier           #+#    #+#             */
-/*   Updated: 2022/12/01 13:01:55 by lpupier          ###   ########.fr       */
+/*   Updated: 2022/12/01 13:56:12 by lpupier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlen(const char *s)
 {
@@ -69,6 +69,11 @@ static char	*loop_gnl(int fd, char *buffer, char *stash)
 	while (!check_separator(stash) && nb_byte_read > 0 && stash != NULL)
 	{
 		nb_byte_read = read(fd, buffer, BUFFER_SIZE);
+		if (nb_byte_read == -1)
+		{
+			buffer = 0;
+			return (NULL);
+		}
 		buffer[nb_byte_read] = '\0';
 		stash = ft_strjoin(stash, buffer, nb_byte_read);
 	}
@@ -78,26 +83,20 @@ static char	*loop_gnl(int fd, char *buffer, char *stash)
 char	*get_next_line(int fd)
 {
 	char		*stash;
-	static char	buffer[BUFFER_SIZE + 1];
+	static char	buffer[OPEN_MAX][BUFFER_SIZE + 1];
 
-	if (fd < 0 || read(fd, 0, 0) || BUFFER_SIZE <= 0)
-	{
-		buffer[0] = 0;
-		return (NULL);
-	}
-	if (ft_strlen(buffer) > 0)
-		stash = ft_strdup(buffer);
-	else
-	{
-		stash = malloc(sizeof(char));
-		if (stash == NULL)
-			return (NULL);
-		stash[0] = '\0';
-	}
-	stash = loop_gnl(fd, buffer, stash);
+	if (fd < 0 || fd > OPEN_MAX || read(fd, 0, 0) < 0 || BUFFER_SIZE <= 0)
+		return (ft_bzero(buffer[fd], BUFFER_SIZE + 1), NULL);
+	stash = malloc(sizeof(char));
 	if (stash == NULL)
 		return (NULL);
-	clean_buffer(buffer);
+	stash[0] = '\0';
+	if (ft_strlen(buffer[fd]) > 0)
+		stash = ft_strjoin(stash, buffer[fd], ft_strlen(buffer[fd]));
+	stash = loop_gnl(fd, buffer[fd], stash);
+	if (stash == NULL)
+		return (NULL);
+	clean_buffer(buffer[fd]);
 	if (!stash[0])
 		return (free(stash), NULL);
 	return (recover_before_separator(stash));
