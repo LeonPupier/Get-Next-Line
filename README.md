@@ -9,7 +9,7 @@ To use the `get_next_line` function in your own projects, follow these steps:
 1. Clone the repository to your local machine.
 2. Open a terminal window and navigate to the root directory of the project.
 3. Run the command `make` to compile the library.
-4. Include the header file `get_next_line.h` in your source code.
+4. Include the header file `get_next_line.h` in your source code. 
 
 ## Usage
 
